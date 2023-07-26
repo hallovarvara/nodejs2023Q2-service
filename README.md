@@ -17,6 +17,10 @@ git clone {repository URL}
 npm install
 ```
 
+## Add environment variables
+
+Copy `.env.example` file and rename it to `.env`.
+
 ## Running application
 
 ```
