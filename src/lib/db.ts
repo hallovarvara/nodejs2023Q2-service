@@ -1,9 +1,10 @@
 import { UserT } from '@/users/users.type';
+import { ArtistT } from '@/artists/artists.type';
 
-type DatabaseT = {
+export const db: {
+  artists: ArtistT[];
   users: UserT[];
-};
-
-export const db: DatabaseT = {
+} = {
+  artists: [],
   users: [],
 };
