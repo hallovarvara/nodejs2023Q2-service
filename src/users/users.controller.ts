@@ -14,12 +14,13 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { UsersService } from './users.service';
-import { UserIdT, UserResponseT } from './users.type';
+import { UserResponseT } from './users.type';
+import { checkIdValid } from '@/lib/utils/check-id-valid';
 import { checkUserCreateRequestValid } from './utils/check-user-create-request-valid';
-import { checkUserIdValid } from './utils/check-user-id-valid';
-import { checkUserExists } from './utils/check-user-exists';
+import { checkUserExistsById } from './utils/check-user-exists-by-id';
 import { getUserResponse } from './utils/get-user-response';
 import { checkUserUpdateRequestValid } from './utils/check-user-update-request-valid';
+import { IdT } from '@/lib/types';
 
 @Controller('user')
 export class UsersController {
@@ -31,11 +32,11 @@ export class UsersController {
     return users.map(getUserResponse);
   }
 
-  @Get('/:userId')
-  async getOne(@Res() response: Response, @Param('userId') userId: UserIdT) {
-    checkUserIdValid(userId);
-    checkUserExists(userId);
-    const user = await this.usersService.getOne(userId);
+  @Get('/:id')
+  async getOne(@Res() response: Response, @Param('id') id: IdT) {
+    checkIdValid(id);
+    checkUserExistsById(id);
+    const user = await this.usersService.getOne(id);
     response.status(HttpStatus.OK).send(getUserResponse(user));
   }
 
@@ -45,29 +46,21 @@ export class UsersController {
     @Res() response: Response,
   ) {
     checkUserCreateRequestValid(body);
-
-    // if (isUserExisting(login)) {
-    //   throw new HttpException(
-    //     `User with login "${login}" already exists`,
-    //     HttpStatus.CONFLICT,
-    //   );
-    // }
-
     const user = await this.usersService.create(body);
     response.status(HttpStatus.CREATED).send(getUserResponse(user));
   }
 
-  @Put('/:userId')
+  @Put('/:id')
   async update(
     @Req() { body }: RawBodyRequest<any>,
     @Res() response: Response,
-    @Param('userId') userId: UserIdT,
+    @Param('id') id: IdT,
   ) {
     checkUserUpdateRequestValid(body);
-    checkUserIdValid(userId);
-    checkUserExists(userId);
+    checkIdValid(id);
+    checkUserExistsById(id);
 
-    const user = await this.usersService.getOne(userId);
+    const user = await this.usersService.getOne(id);
 
     if (user.password !== body.oldPassword) {
       throw new HttpException(
@@ -76,15 +69,15 @@ export class UsersController {
       );
     }
 
-    const updatedUser = await this.usersService.update(body, userId);
+    const updatedUser = await this.usersService.update(body, id);
     response.status(HttpStatus.OK).send(getUserResponse(updatedUser));
   }
 
-  @Delete('/:userId')
-  async delete(@Res() response: Response, @Param('userId') userId: UserIdT) {
-    checkUserIdValid(userId);
-    checkUserExists(userId);
-    const user = await this.usersService.delete(userId);
+  @Delete('/:id')
+  async delete(@Res() response: Response, @Param('id') id: IdT) {
+    checkIdValid(id);
+    checkUserExistsById(id);
+    const user = await this.usersService.delete(id);
     response.status(HttpStatus.NO_CONTENT).send(getUserResponse(user));
   }
 }

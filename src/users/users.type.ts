@@ -1,7 +1,7 @@
-export type UserIdT = string;
+import { IdT } from '@/lib/types';
 
 export type UserT = {
-  id: UserIdT; // uuid v4
+  id: IdT; // uuid v4
   login: string;
   password: string;
   version: number; // integer number, increments on update
