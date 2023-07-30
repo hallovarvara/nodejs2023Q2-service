@@ -37,8 +37,12 @@ export class ArtistsService {
   async delete(id: IdT): Promise<ArtistT> {
     const index = db.artists.findIndex((entry) => entry.id === id);
 
-    db.albums = db.albums.map((album) =>
-      album.artistId === id ? { ...album, artistId: null } : album,
+    db.albums = db.albums.map((entry) =>
+      entry.artistId === id ? { ...entry, artistId: null } : entry,
+    );
+
+    db.tracks = db.tracks.map((entry) =>
+      entry.artistId === id ? { ...entry, artistId: null } : entry,
     );
 
     const [entry] = db.artists.splice(index, 1);
