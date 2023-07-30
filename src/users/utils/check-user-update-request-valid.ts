@@ -7,7 +7,7 @@ export const checkUserUpdateRequestValid = ({
 }: RawBodyRequest<any>) => {
   if (!isFieldValidString(newPassword) || !isFieldValidString(oldPassword)) {
     throw new HttpException(
-      'Set "newPassword" and "oldPassword" for updating user',
+      'Set correct "newPassword" and "oldPassword" for updating user',
       HttpStatus.BAD_REQUEST,
     );
   }

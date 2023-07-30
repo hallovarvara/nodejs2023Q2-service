@@ -7,7 +7,7 @@ export const checkUserCreateRequestValid = ({
 }: RawBodyRequest<any>) => {
   if (!isFieldValidString(login) || !isFieldValidString(password)) {
     throw new HttpException(
-      'Set "login" and "password" for a new user',
+      'Set correct "login" and "password" for a new user',
       HttpStatus.BAD_REQUEST,
     );
   }

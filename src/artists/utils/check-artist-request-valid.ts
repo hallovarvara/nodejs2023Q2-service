@@ -8,7 +8,7 @@ export const checkArtistRequestValid = ({
 }: RawBodyRequest<any>) => {
   if (!isFieldValidString(name) || !isFieldValidBoolean(grammy)) {
     throw new HttpException(
-      'Set "name" and "grammy" fields',
+      'Set correct "name" and "grammy" fields',
       HttpStatus.BAD_REQUEST,
     );
   }
