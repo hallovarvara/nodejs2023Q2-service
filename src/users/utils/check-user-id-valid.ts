@@ -1,6 +1,6 @@
 import { validate } from 'uuid';
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { UserIdT } from '@/users/users.type';
+import { UserIdT } from '../users.type';
 
 export const checkUserIdValid = (userId: UserIdT) => {
   if (!validate(userId)) {

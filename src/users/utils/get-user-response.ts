@@ -1,4 +1,4 @@
-import { UserResponseT, UserT } from '@/users/users.type';
+import { UserResponseT, UserT } from '../users.type';
 
 export const getUserResponse = (user: UserT): UserResponseT =>
   Object.entries(user).reduce(

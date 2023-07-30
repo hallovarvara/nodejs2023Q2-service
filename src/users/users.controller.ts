@@ -15,11 +15,11 @@ import {
 import { Response } from 'express';
 import { UsersService } from './users.service';
 import { UserIdT, UserResponseT } from './users.type';
-import { checkUserCreateRequestValid } from '@/lib/utils/check-user-create-request-valid';
-import { checkUserIdValid } from '@/lib/utils/check-user-id-valid';
-import { checkUserExists } from '@/lib/utils/check-user-exists';
-import { getUserResponse } from '@/lib/utils/get-user-response';
-import { checkUserUpdateRequestValid } from '@/lib/utils/check-user-update-request-valid';
+import { checkUserCreateRequestValid } from './utils/check-user-create-request-valid';
+import { checkUserIdValid } from './utils/check-user-id-valid';
+import { checkUserExists } from './utils/check-user-exists';
+import { getUserResponse } from './utils/get-user-response';
+import { checkUserUpdateRequestValid } from './utils/check-user-update-request-valid';
 
 @Controller('user')
 export class UsersController {

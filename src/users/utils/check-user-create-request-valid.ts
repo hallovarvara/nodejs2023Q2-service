@@ -1,11 +1,11 @@
 import { HttpException, HttpStatus, RawBodyRequest } from '@nestjs/common';
-import { isFieldValid } from '@/lib/utils/is-field-valid';
+import { isFieldValidString } from '@/lib/utils/is-field-valid-string';
 
 export const checkUserCreateRequestValid = ({
   login,
   password,
 }: RawBodyRequest<any>) => {
-  if (!isFieldValid(login) || !isFieldValid(password)) {
+  if (!isFieldValidString(login) || !isFieldValidString(password)) {
     throw new HttpException(
       'Set "login" and "password" for a new user',
       HttpStatus.BAD_REQUEST,

@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { getNewUser } from '@/lib/utils/get-new-user';
+import { v4 } from 'uuid';
 import { db } from '@/lib/db';
 import {
   CreateUserDtoT,
   UpdatePasswordDtoT,
   UserIdT,
   UserT,
-} from '@/users/users.type';
+} from './users.type';
 
 @Injectable()
 export class UsersService {
@@ -18,8 +18,18 @@ export class UsersService {
     return db.users.find(({ id }) => id === userId);
   }
 
-  async create(data: CreateUserDtoT): Promise<UserT> {
-    const user = getNewUser(data);
+  async create({ login, password }: CreateUserDtoT): Promise<UserT> {
+    const timestampNow = new Date().getTime();
+
+    const user = {
+      login,
+      password,
+      id: v4(),
+      createdAt: timestampNow,
+      updatedAt: timestampNow,
+      version: 1,
+    };
+
     db.users.push(user);
     return user;
   }
