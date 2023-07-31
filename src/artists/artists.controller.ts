@@ -16,7 +16,7 @@ import { IdT } from '@/lib/types';
 import { ArtistsService } from './artists.service';
 import { ArtistT } from './artists.type';
 import { checkIdValid } from '@/lib/utils/check-id-valid';
-import { checkArtistExistsById } from '@/artists/utils/check-artist-exists-by-id';
+import { checkArtistExistsById } from '@/lib/utils/check-artist-exists-by-id';
 import { checkArtistRequestValid } from '@/artists/utils/check-artist-request-valid';
 
 @Controller('artist')
