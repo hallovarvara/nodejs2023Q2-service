@@ -8,7 +8,13 @@
 ## Downloading
 
 ```
-git clone {repository URL}
+git clone https://github.com/hallovarvara/nodejs2023Q2-service.git
+```
+
+or by using SSH:
+
+```
+git clone git@github.com:hallovarvara/nodejs2023Q2-service.git
 ```
 
 ## Installing NPM modules
@@ -16,6 +22,12 @@ git clone {repository URL}
 ```
 npm install
 ```
+
+Make sure Node version is 18+
+
+## Add environment variables
+
+Copy `.env.example` file and paste it renamed to `.env`.
 
 ## Running application
 
