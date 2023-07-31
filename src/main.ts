@@ -20,12 +20,14 @@ async function bootstrap() {
     rawBody: true,
   });
 
-  const apiYaml = await readFile(
+  app.enableCors();
+
+  const docFile = await readFile(
     path.join(__dirname, '..', 'doc', 'api.yaml'),
     'utf-8',
   );
 
-  const config: OpenAPIObject = load(apiYaml) as OpenAPIObject;
+  const config: OpenAPIObject = load(docFile) as OpenAPIObject;
 
   const document = SwaggerModule.createDocument(app, config, {
     include: [
