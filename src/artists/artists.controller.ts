@@ -11,6 +11,7 @@ import {
   Req,
   Res,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { IdT } from '@/lib/types';
 import { ArtistsService } from './artists.service';
@@ -20,6 +21,7 @@ import { checkArtistExistsById } from '@/lib/utils/check-artist-exists-by-id';
 import { checkArtistRequestValid } from '@/artists/utils/check-artist-request-valid';
 
 @Controller('artist')
+@ApiTags('artist')
 export class ArtistsController {
   constructor(private readonly artistsService: ArtistsService) {}
   @Get()

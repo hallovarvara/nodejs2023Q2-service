@@ -8,6 +8,7 @@ import {
   Post,
   Res,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { IdT } from '@/lib/types';
 import { FavoritesService } from './favorites.service';
@@ -19,6 +20,7 @@ import { checkAlbumExistsById } from '@/lib/utils/check-album-exists-by-id';
 import { checkArtistExistsById } from '@/lib/utils/check-artist-exists-by-id';
 
 @Controller('favs')
+@ApiTags('favs')
 export class FavoritesController {
   constructor(private readonly favoritesService: FavoritesService) {}
   @Get()

@@ -11,15 +11,17 @@ import {
   Req,
   Res,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { IdT } from '@/lib/types';
 import { AlbumsService } from './albums.service';
 import { AlbumT } from './albums.type';
 import { checkIdValid } from '@/lib/utils/check-id-valid';
-import { checkAlbumExistsById } from '../lib/utils/check-album-exists-by-id';
+import { checkAlbumExistsById } from '@/lib/utils/check-album-exists-by-id';
 import { checkAlbumRequestValid } from './utils/check-album-request-valid';
 
 @Controller('album')
+@ApiTags('album')
 export class AlbumsController {
   constructor(private readonly albumsService: AlbumsService) {}
   @Get()

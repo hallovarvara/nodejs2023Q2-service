@@ -11,15 +11,17 @@ import {
   Req,
   Res,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { IdT } from '@/lib/types';
 import { TracksService } from './tracks.service';
 import { TrackT } from './tracks.type';
 import { checkIdValid } from '@/lib/utils/check-id-valid';
-import { checkTrackExistsById } from '../lib/utils/check-track-exists-by-id';
+import { checkTrackExistsById } from '@/lib/utils/check-track-exists-by-id';
 import { checkTrackRequestValid } from './utils/check-track-request-valid';
 
 @Controller('track')
+@ApiTags('track')
 export class TracksController {
   constructor(private readonly tracksService: TracksService) {}
   @Get()
