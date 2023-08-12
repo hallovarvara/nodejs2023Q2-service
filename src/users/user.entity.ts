@@ -29,11 +29,11 @@ export class User {
     type: 'number',
     example: 1655000000,
   })
-  createdAt: string;
+  createdAt: number;
 
   @ApiProperty({
     type: 'number',
     example: 1655999999,
   })
-  updatedAt: string;
+  updatedAt: number;
 }

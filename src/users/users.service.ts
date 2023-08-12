@@ -1,20 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { v4 } from 'uuid';
 import { db } from '@/lib/db';
-import { CreateUserDtoT, UpdatePasswordDtoT, UserT } from './users.type';
 import { IdT } from '@/lib/types';
+import { User } from '@/users/user.entity';
+import { CreateUserDto } from '@/users/dto/create-user.dto';
+import { UpdateUserDto } from '@/users/dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
-  async getAll(): Promise<UserT[]> {
+  async getAll(): Promise<User[]> {
     return db.users;
   }
 
-  async getOne(id: IdT): Promise<UserT> {
+  async getOne(id: IdT): Promise<User> {
     return db.users.find((entry) => entry.id === id);
   }
 
-  async create({ login, password }: CreateUserDtoT): Promise<UserT> {
+  async create({ login, password }: CreateUserDto): Promise<User> {
     const timestampNow = new Date().getTime();
 
     const user = {
@@ -30,7 +32,7 @@ export class UsersService {
     return user;
   }
 
-  async update({ newPassword }: UpdatePasswordDtoT, id: IdT) {
+  async update({ newPassword }: UpdateUserDto, id: IdT) {
     db.users = db.users.map((user) =>
       user.id !== id
         ? user
@@ -42,10 +44,10 @@ export class UsersService {
           },
     );
 
-    return db.users.find(({ id }) => id === id);
+    return db.users.find((user) => user.id === id);
   }
 
-  async delete(id: IdT): Promise<UserT> {
+  async delete(id: IdT): Promise<User> {
     const index = db.users.findIndex((entry) => entry.id === id);
     const [entry] = db.users.splice(index, 1);
     return entry;

@@ -1,15 +1,15 @@
-import { UserT } from '@/users/users.type';
-import { ArtistT } from '@/artists/artists.type';
+import { Artist } from '@/artists/artists.entity';
+import { User } from '@/users/user.entity';
 import { AlbumT } from '@/albums/albums.type';
 import { TrackT } from '@/tracks/tracks.type';
 import { FavoritesT } from '@/favorites/favorites.type';
 
 export const db: {
   albums: AlbumT[];
-  artists: ArtistT[];
+  artists: Artist[];
   favorites: FavoritesT;
   tracks: TrackT[];
-  users: UserT[];
+  users: User[];
 } = {
   albums: [],
   artists: [],

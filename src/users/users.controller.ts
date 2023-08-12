@@ -25,7 +25,6 @@ import { Response } from 'express';
 import { User } from '@/users/user.entity';
 import { IdT } from '@/lib/types';
 import { UsersService } from './users.service';
-import { UserResponseT } from './users.type';
 import { checkIdValid } from '@/lib/utils/check-id-valid';
 import { checkUserCreateRequestValid } from './utils/check-user-create-request-valid';
 import { checkUserExistsById } from './utils/check-user-exists-by-id';
@@ -51,7 +50,7 @@ export class UsersController {
   })
   @ApiUnauthorizedResponse({ description: RESPONSE_MESSAGES.UnauthorizedError })
   @HttpCode(HttpStatus.OK)
-  async findAll(): Promise<UserResponseT[]> {
+  async findAll(): Promise<Omit<User, 'password'>[]> {
     const users = await this.usersService.getAll();
     return users.map(getUserResponse);
   }
@@ -69,9 +68,7 @@ export class UsersController {
     description: 'Bad request. userId is invalid (not uuid)',
   })
   @ApiUnauthorizedResponse({ description: RESPONSE_MESSAGES.UnauthorizedError })
-  @ApiNotFoundResponse({
-    description: 'User not found',
-  })
+  @ApiNotFoundResponse({ description: 'User not found' })
   async getOne(@Res() response: Response, @Param('id') id: IdT) {
     checkIdValid(id);
     checkUserExistsById(id);

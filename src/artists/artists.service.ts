@@ -1,20 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { v4 } from 'uuid';
 import { db } from '@/lib/db';
-import { ArtistT, ArtistDtoT } from './artists.type';
+import { ArtistDto } from '@/artists/dto/artist.dto';
 import { IdT } from '@/lib/types';
+import { Artist } from '@/artists/artists.entity';
 
 @Injectable()
 export class ArtistsService {
-  async getAll(): Promise<ArtistT[]> {
+  async getAll(): Promise<Artist[]> {
     return db.artists;
   }
 
-  async getOne(id: IdT): Promise<ArtistT> {
+  async getOne(id: IdT): Promise<Artist> {
     return db.artists.find((entry) => entry.id === id);
   }
 
-  async create({ name, grammy }: ArtistDtoT): Promise<ArtistT> {
+  async create({ name, grammy }: ArtistDto): Promise<Artist> {
     const artist = {
       id: v4(),
       name,
@@ -26,7 +27,7 @@ export class ArtistsService {
     return artist;
   }
 
-  async update({ name, grammy }: ArtistDtoT, id: IdT) {
+  async update({ name, grammy }: ArtistDto, id: IdT) {
     db.artists = db.artists.map((entry) =>
       entry.id !== id ? entry : { ...entry, name, grammy },
     );
@@ -34,7 +35,7 @@ export class ArtistsService {
     return db.artists.find((entry) => entry.id === id);
   }
 
-  async delete(id: IdT): Promise<ArtistT> {
+  async delete(id: IdT): Promise<Artist> {
     const index = db.artists.findIndex((entry) => entry.id === id);
 
     db.albums = db.albums.map((entry) =>

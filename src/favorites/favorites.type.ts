@@ -1,7 +1,7 @@
 import { IdT } from '@/lib/types';
-import { ArtistT } from '@/artists/artists.type';
 import { AlbumT } from '@/albums/albums.type';
 import { TrackT } from '@/tracks/tracks.type';
+import { Artist } from '@/artists/artists.entity';
 
 type FavoritesEntitiesNamesT = 'artists' | 'albums' | 'tracks';
 
@@ -10,7 +10,7 @@ export type FavoritesT = {
 };
 
 export type FavoritesResponseT = {
-  artists: ArtistT[];
+  artists: Artist[];
   albums: AlbumT[];
   tracks: TrackT[];
 };
