@@ -1,14 +1,17 @@
 import { Artist } from '@/artists/artists.entity';
 import { User } from '@/users/user.entity';
-import { AlbumT } from '@/albums/albums.type';
-import { TrackT } from '@/tracks/tracks.type';
-import { FavoritesT } from '@/favorites/favorites.type';
+import { FavoritesEntitiesEnum } from '@/favorites/favorites.type';
+import { Album } from '@/albums/albums.entity';
+import { Track } from '@/tracks/tracks.entity';
+import { IdT } from '@/lib/types';
 
 export const db: {
-  albums: AlbumT[];
+  albums: Album[];
   artists: Artist[];
-  favorites: FavoritesT;
-  tracks: TrackT[];
+  favorites: {
+    [key in FavoritesEntitiesEnum]: IdT[]; // favorite entities ids
+  };
+  tracks: Track[];
   users: User[];
 } = {
   albums: [],
