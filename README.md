@@ -23,16 +23,33 @@ git clone git@github.com:hallovarvara/nodejs2023Q2-service.git
 npm install
 ```
 
-Make sure Node version is 18+
+Make sure Node version is 18+.
 
 ## Add environment variables
 
-Copy `.env.example` file and paste it renamed to `.env`.
+Copy `.env.example` file, paste it, and rename to `.env`.
 
 ## Running application
 
+It's recommended to install [Docker Desktop](https://www.docker.com/products/docker-desktop/) to be able to check run containers better.
+
+Run in terminal:
+
+```bash
+npm run docker:start
 ```
-npm start
+
+If you got this error (Mac users):  
+`open /Users/username/.docker/buildx/current: permission denied`
+
+then run:
+```bash
+sudo chown -R $(whoami) ~/.docker
+```
+
+Make data migration:
+```bash
+npm run docker:prisma:migrate
 ```
 
 After starting the app on port (4000 as default) you can open
@@ -75,6 +92,14 @@ npm run lint
 
 ```
 npm run format
+```
+
+### Docker
+
+#### Scan Docker images for vulnerabilities
+
+```
+npm run docker:scan
 ```
 
 ### Debugging in VSCode
