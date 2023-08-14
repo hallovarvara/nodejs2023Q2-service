@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { db } from '@/lib/db';
-import { FavoritesResponseT } from './favorites.type';
 import { IdT } from '@/lib/types';
+import { Favorites } from '@/favorites/favorites.entity';
 
 @Injectable()
 export class FavoritesService {
-  async getAll(): Promise<FavoritesResponseT> {
-    const favs = Object.entries(db.favorites).reduce(
+  async getAll(): Promise<Favorites> {
+    return Object.entries(db.favorites).reduce(
       (result, [key, indices]) => ({
         ...result,
         [key]: indices.reduce((entries, id) => {
@@ -14,13 +14,11 @@ export class FavoritesService {
           return entry ? [...entries, entry] : entries;
         }, []),
       }),
-      {} as FavoritesResponseT,
+      {} as Favorites,
     );
-
-    return favs;
   }
 
-  async addTrack(id: IdT): Promise<FavoritesResponseT> {
+  async addTrack(id: IdT): Promise<Favorites> {
     db.favorites.tracks.push(id);
     return this.getAll();
   }
@@ -29,13 +27,13 @@ export class FavoritesService {
     return db.favorites.tracks.includes(id);
   }
 
-  async deleteTrack(id: IdT): Promise<FavoritesResponseT> {
+  async deleteTrack(id: IdT): Promise<Favorites> {
     const index = db.favorites.tracks.findIndex((entry) => entry === id);
     db.favorites.tracks.splice(index, 1);
     return this.getAll();
   }
 
-  async addAlbum(id: IdT): Promise<FavoritesResponseT> {
+  async addAlbum(id: IdT): Promise<Favorites> {
     db.favorites.albums.push(id);
     return this.getAll();
   }
@@ -44,13 +42,13 @@ export class FavoritesService {
     return db.favorites.albums.includes(id);
   }
 
-  async deleteAlbum(id: IdT): Promise<FavoritesResponseT> {
+  async deleteAlbum(id: IdT): Promise<Favorites> {
     const index = db.favorites.albums.findIndex((entry) => entry === id);
     db.favorites.albums.splice(index, 1);
     return this.getAll();
   }
 
-  async addArtist(id: IdT): Promise<FavoritesResponseT> {
+  async addArtist(id: IdT): Promise<Favorites> {
     db.favorites.artists.push(id);
     return this.getAll();
   }
@@ -59,7 +57,7 @@ export class FavoritesService {
     return db.favorites.artists.includes(id);
   }
 
-  async deleteArtist(id: IdT): Promise<FavoritesResponseT> {
+  async deleteArtist(id: IdT): Promise<Favorites> {
     const index = db.favorites.artists.findIndex((entry) => entry === id);
     db.favorites.artists.splice(index, 1);
     return this.getAll();

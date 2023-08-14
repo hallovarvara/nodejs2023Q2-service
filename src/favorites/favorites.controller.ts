@@ -8,28 +8,63 @@ import {
   Post,
   Res,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+  ApiUnauthorizedResponse,
+  ApiUnprocessableEntityResponse,
+} from '@nestjs/swagger';
 import { Response } from 'express';
 import { IdT } from '@/lib/types';
 import { FavoritesService } from './favorites.service';
-import { FavoritesResponseT } from './favorites.type';
 import { throwNotFavoriteException } from '@/favorites/utils/throw-not-favorite-exception';
 import { checkIdValid } from '@/lib/utils/check-id-valid';
 import { checkTrackExistsById } from '@/lib/utils/check-track-exists-by-id';
 import { checkAlbumExistsById } from '@/lib/utils/check-album-exists-by-id';
 import { checkArtistExistsById } from '@/lib/utils/check-artist-exists-by-id';
+import { RESPONSE_MESSAGES } from '@/lib/constants/response-messages';
+import { Favorites } from '@/favorites/favorites.entity';
+import { Track } from '@/tracks/tracks.entity';
+import { Album } from '@/albums/albums.entity';
 
 @Controller('favs')
 @ApiTags('favs')
 export class FavoritesController {
   constructor(private readonly favoritesService: FavoritesService) {}
   @Get()
+  @ApiOperation({
+    summary: 'Get all favorites',
+    description: 'Gets all favorites movies, tracks and books',
+  })
+  @ApiOkResponse({
+    description: 'Successful operation',
+    type: Favorites,
+  })
+  @ApiUnauthorizedResponse({ description: RESPONSE_MESSAGES.UnauthorizedError })
   @HttpCode(HttpStatus.OK)
-  async findAll(): Promise<FavoritesResponseT> {
+  async findAll(): Promise<Favorites> {
     return await this.favoritesService.getAll();
   }
 
   @Post('track/:id')
+  @ApiOperation({
+    summary: 'Add track to the favorites',
+    description: 'Add track to the favorites',
+  })
+  @ApiCreatedResponse({
+    description: 'Added successfully',
+    type: Favorites,
+  })
+  @ApiBadRequestResponse({ description: 'Bad. trackId is invalid (not uuid)' })
+  @ApiUnauthorizedResponse({ description: RESPONSE_MESSAGES.UnauthorizedError })
+  @ApiUnprocessableEntityResponse({
+    description: "Track with id doesn't exist",
+  })
   async addTrack(@Param('id') id: IdT, @Res() response: Response) {
     checkIdValid(id);
     checkTrackExistsById(id, HttpStatus.UNPROCESSABLE_ENTITY);
@@ -38,6 +73,17 @@ export class FavoritesController {
   }
 
   @Delete('track/:id')
+  @ApiOperation({
+    summary: 'Deletes track from favorites',
+    description: 'Deletes track from favorites',
+  })
+  @ApiNoContentResponse({
+    description: 'Deleted successfully',
+    type: Track,
+  })
+  @ApiBadRequestResponse({ description: 'Bad. trackId is invalid (not uuid)' })
+  @ApiUnauthorizedResponse({ description: RESPONSE_MESSAGES.UnauthorizedError })
+  @ApiNotFoundResponse({ description: 'Track was not found' })
   async deleteTrack(@Param('id') id: IdT, @Res() response: Response) {
     checkIdValid(id);
 
@@ -50,6 +96,19 @@ export class FavoritesController {
   }
 
   @Post('album/:id')
+  @ApiOperation({
+    summary: 'Add album to the favorites',
+    description: 'Add album to the favorites',
+  })
+  @ApiCreatedResponse({
+    description: 'Added successfully',
+    type: Favorites,
+  })
+  @ApiBadRequestResponse({ description: 'Bad. albumId is invalid (not uuid)' })
+  @ApiUnauthorizedResponse({ description: RESPONSE_MESSAGES.UnauthorizedError })
+  @ApiUnprocessableEntityResponse({
+    description: "Album with id doesn't exist",
+  })
   async addAlbum(@Param('id') id: IdT, @Res() response: Response) {
     checkIdValid(id);
     checkAlbumExistsById(id, HttpStatus.UNPROCESSABLE_ENTITY);
@@ -58,6 +117,17 @@ export class FavoritesController {
   }
 
   @Delete('album/:id')
+  @ApiOperation({
+    summary: 'Deletes album from favorites',
+    description: 'Deletes album from favorites',
+  })
+  @ApiNoContentResponse({
+    description: 'Deleted successfully',
+    type: Album,
+  })
+  @ApiBadRequestResponse({ description: 'Bad. albumId is invalid (not uuid)' })
+  @ApiUnauthorizedResponse({ description: RESPONSE_MESSAGES.UnauthorizedError })
+  @ApiNotFoundResponse({ description: 'Album was not found' })
   async deleteAlbum(@Param('id') id: IdT, @Res() response: Response) {
     checkIdValid(id);
 
@@ -70,6 +140,21 @@ export class FavoritesController {
   }
 
   @Post('artist/:id')
+  @ApiOperation({
+    summary: 'Add artist to the favorites',
+    description: 'Add artist to the favorites',
+  })
+  @ApiCreatedResponse({
+    description: 'Added successfully',
+    type: Favorites,
+  })
+  @ApiBadRequestResponse({
+    description: 'Bad request. artistId is invalid (not uuid)',
+  })
+  @ApiUnauthorizedResponse({ description: RESPONSE_MESSAGES.UnauthorizedError })
+  @ApiUnprocessableEntityResponse({
+    description: "Artist with id doesn't exist",
+  })
   async addArtist(@Param('id') id: IdT, @Res() response: Response) {
     checkIdValid(id);
     checkArtistExistsById(id, HttpStatus.UNPROCESSABLE_ENTITY);
@@ -78,6 +163,17 @@ export class FavoritesController {
   }
 
   @Delete('artist/:id')
+  @ApiOperation({
+    summary: 'Deletes artist from favorites',
+    description: 'Deletes artist from favorites',
+  })
+  @ApiNoContentResponse({
+    description: 'Deleted successfully',
+    type: Track,
+  })
+  @ApiBadRequestResponse({ description: 'Bad. artistId is invalid (not uuid)' })
+  @ApiUnauthorizedResponse({ description: RESPONSE_MESSAGES.UnauthorizedError })
+  @ApiNotFoundResponse({ description: 'Artist was not found' })
   async deleteArtist(@Param('id') id: IdT, @Res() response: Response) {
     checkIdValid(id);
 
