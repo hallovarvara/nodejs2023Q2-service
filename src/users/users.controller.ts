@@ -7,6 +7,7 @@ import {
   HttpException,
   HttpStatus,
   Param,
+  ParseUUIDPipe,
   Post,
   Put,
   Res,
@@ -25,12 +26,12 @@ import { Response } from 'express';
 import { User } from '@/users/user.entity';
 import { IdT } from '@/lib/types';
 import { UsersService } from './users.service';
-import { checkIdValid } from '@/lib/utils/check-id-valid';
 import { checkUserCreateRequestValid } from './utils/check-user-create-request-valid';
 import { checkUserExistsById } from './utils/check-user-exists-by-id';
 import { getUserResponse } from './utils/get-user-response';
 import { checkUserUpdateRequestValid } from './utils/check-user-update-request-valid';
 import { RESPONSE_MESSAGES } from '@/lib/constants/response-messages';
+import { UUID_VERSION } from '@/lib/constants';
 import { CreateUserDto } from '@/users/dto/create-user.dto';
 import { UpdateUserDto } from '@/users/dto/update-user.dto';
 
@@ -69,8 +70,10 @@ export class UsersController {
   })
   @ApiUnauthorizedResponse({ description: RESPONSE_MESSAGES.UnauthorizedError })
   @ApiNotFoundResponse({ description: 'User not found' })
-  async getOne(@Res() response: Response, @Param('id') id: IdT) {
-    checkIdValid(id);
+  async getOne(
+    @Res() response: Response,
+    @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
+  ) {
     checkUserExistsById(id);
     const user = await this.usersService.getOne(id);
     response.status(HttpStatus.OK).send(getUserResponse(user));
@@ -110,10 +113,9 @@ export class UsersController {
   async update(
     @Body() body: UpdateUserDto,
     @Res() response: Response,
-    @Param('id') id: IdT,
+    @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
   ) {
     checkUserUpdateRequestValid(body);
-    checkIdValid(id);
     checkUserExistsById(id);
 
     const user = await this.usersService.getOne(id);
@@ -143,8 +145,10 @@ export class UsersController {
   })
   @ApiUnauthorizedResponse({ description: RESPONSE_MESSAGES.UnauthorizedError })
   @ApiNotFoundResponse({ description: 'User not found' })
-  async delete(@Res() response: Response, @Param('id') id: IdT) {
-    checkIdValid(id);
+  async delete(
+    @Res() response: Response,
+    @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
+  ) {
     checkUserExistsById(id);
     const user = await this.usersService.delete(id);
     response.status(HttpStatus.NO_CONTENT).send(getUserResponse(user));

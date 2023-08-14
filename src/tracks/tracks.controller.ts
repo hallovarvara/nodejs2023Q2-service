@@ -9,6 +9,7 @@ import {
   Put,
   Res,
   Body,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -25,9 +26,9 @@ import { TracksService } from './tracks.service';
 import { Track } from '@/tracks/tracks.entity';
 import { TrackDto } from '@/tracks/dto/track.dto';
 import { RESPONSE_MESSAGES } from '@/lib/constants/response-messages';
-import { checkIdValid } from '@/lib/utils/check-id-valid';
 import { checkTrackExistsById } from '@/lib/utils/check-track-exists-by-id';
 import { checkTrackRequestValid } from './utils/check-track-request-valid';
+import { UUID_VERSION } from '@/lib/constants';
 
 @Controller('track')
 @ApiTags('track')
@@ -63,8 +64,10 @@ export class TracksController {
   })
   @ApiUnauthorizedResponse({ description: RESPONSE_MESSAGES.UnauthorizedError })
   @ApiNotFoundResponse({ description: 'Track was not found' })
-  async getOne(@Res() response: Response, @Param('id') id: IdT) {
-    checkIdValid(id);
+  async getOne(
+    @Res() response: Response,
+    @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
+  ) {
     checkTrackExistsById(id);
     const track = await this.tracksService.getOne(id);
     response.status(HttpStatus.OK).send(track);
@@ -106,10 +109,9 @@ export class TracksController {
   async update(
     @Body() body: TrackDto,
     @Res() response: Response,
-    @Param('id') id: IdT,
+    @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
   ) {
     checkTrackRequestValid(body);
-    checkIdValid(id);
     checkTrackExistsById(id);
     const track = await this.tracksService.update(body, id);
     response.status(HttpStatus.OK).send(track);
@@ -129,8 +131,10 @@ export class TracksController {
   })
   @ApiUnauthorizedResponse({ description: RESPONSE_MESSAGES.UnauthorizedError })
   @ApiNotFoundResponse({ description: 'Track was not found' })
-  async delete(@Res() response: Response, @Param('id') id: IdT) {
-    checkIdValid(id);
+  async delete(
+    @Res() response: Response,
+    @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
+  ) {
     checkTrackExistsById(id);
     const track = await this.tracksService.delete(id);
     response.status(HttpStatus.NO_CONTENT).send(track);

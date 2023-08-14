@@ -9,6 +9,7 @@ import {
   Put,
   Res,
   Body,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -22,12 +23,12 @@ import {
 import { Response } from 'express';
 import { IdT } from '@/lib/types';
 import { AlbumsService } from './albums.service';
-import { checkIdValid } from '@/lib/utils/check-id-valid';
 import { checkAlbumExistsById } from '@/lib/utils/check-album-exists-by-id';
 import { checkAlbumRequestValid } from './utils/check-album-request-valid';
 import { Album } from '@/albums/albums.entity';
 import { RESPONSE_MESSAGES } from '@/lib/constants/response-messages';
 import { AlbumDto } from '@/albums/dto/album.dto';
+import { UUID_VERSION } from '@/lib/constants';
 
 @Controller('album')
 @ApiTags('album')
@@ -63,8 +64,10 @@ export class AlbumsController {
   })
   @ApiUnauthorizedResponse({ description: RESPONSE_MESSAGES.UnauthorizedError })
   @ApiNotFoundResponse({ description: 'Album was not found' })
-  async getOne(@Res() response: Response, @Param('id') id: IdT) {
-    checkIdValid(id);
+  async getOne(
+    @Res() response: Response,
+    @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
+  ) {
     checkAlbumExistsById(id);
     const artist = await this.albumsService.getOne(id);
     response.status(HttpStatus.OK).send(artist);
@@ -106,10 +109,9 @@ export class AlbumsController {
   async update(
     @Body() body: AlbumDto,
     @Res() response: Response,
-    @Param('id') id: IdT,
+    @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
   ) {
     checkAlbumRequestValid(body);
-    checkIdValid(id);
     checkAlbumExistsById(id);
     const artist = await this.albumsService.update(body, id);
     response.status(HttpStatus.OK).send(artist);
@@ -129,8 +131,10 @@ export class AlbumsController {
   })
   @ApiUnauthorizedResponse({ description: RESPONSE_MESSAGES.UnauthorizedError })
   @ApiNotFoundResponse({ description: 'Album was not found' })
-  async delete(@Res() response: Response, @Param('id') id: IdT) {
-    checkIdValid(id);
+  async delete(
+    @Res() response: Response,
+    @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
+  ) {
     checkAlbumExistsById(id);
     const artist = await this.albumsService.delete(id);
     response.status(HttpStatus.NO_CONTENT).send(artist);

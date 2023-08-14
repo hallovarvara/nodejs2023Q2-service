@@ -5,6 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseUUIDPipe,
   Post,
   Res,
 } from '@nestjs/common';
@@ -23,7 +24,6 @@ import { Response } from 'express';
 import { IdT } from '@/lib/types';
 import { FavoritesService } from './favorites.service';
 import { throwNotFavoriteException } from '@/favorites/utils/throw-not-favorite-exception';
-import { checkIdValid } from '@/lib/utils/check-id-valid';
 import { checkTrackExistsById } from '@/lib/utils/check-track-exists-by-id';
 import { checkAlbumExistsById } from '@/lib/utils/check-album-exists-by-id';
 import { checkArtistExistsById } from '@/lib/utils/check-artist-exists-by-id';
@@ -31,6 +31,7 @@ import { RESPONSE_MESSAGES } from '@/lib/constants/response-messages';
 import { Favorites } from '@/favorites/favorites.entity';
 import { Track } from '@/tracks/tracks.entity';
 import { Album } from '@/albums/albums.entity';
+import { UUID_VERSION } from '@/lib/constants';
 
 @Controller('favs')
 @ApiTags('favs')
@@ -65,8 +66,10 @@ export class FavoritesController {
   @ApiUnprocessableEntityResponse({
     description: "Track with id doesn't exist",
   })
-  async addTrack(@Param('id') id: IdT, @Res() response: Response) {
-    checkIdValid(id);
+  async addTrack(
+    @Res() response: Response,
+    @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
+  ) {
     checkTrackExistsById(id, HttpStatus.UNPROCESSABLE_ENTITY);
     const favorites = await this.favoritesService.addTrack(id);
     response.status(HttpStatus.CREATED).send(favorites);
@@ -84,9 +87,10 @@ export class FavoritesController {
   @ApiBadRequestResponse({ description: 'Bad. trackId is invalid (not uuid)' })
   @ApiUnauthorizedResponse({ description: RESPONSE_MESSAGES.UnauthorizedError })
   @ApiNotFoundResponse({ description: 'Track was not found' })
-  async deleteTrack(@Param('id') id: IdT, @Res() response: Response) {
-    checkIdValid(id);
-
+  async deleteTrack(
+    @Res() response: Response,
+    @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
+  ) {
     if (!(await this.favoritesService.checkFavoriteTrackId(id))) {
       throwNotFavoriteException({ id, entityName: 'Track' });
     }
@@ -109,8 +113,10 @@ export class FavoritesController {
   @ApiUnprocessableEntityResponse({
     description: "Album with id doesn't exist",
   })
-  async addAlbum(@Param('id') id: IdT, @Res() response: Response) {
-    checkIdValid(id);
+  async addAlbum(
+    @Res() response: Response,
+    @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
+  ) {
     checkAlbumExistsById(id, HttpStatus.UNPROCESSABLE_ENTITY);
     const favorites = await this.favoritesService.addAlbum(id);
     response.status(HttpStatus.CREATED).send(favorites);
@@ -128,9 +134,10 @@ export class FavoritesController {
   @ApiBadRequestResponse({ description: 'Bad. albumId is invalid (not uuid)' })
   @ApiUnauthorizedResponse({ description: RESPONSE_MESSAGES.UnauthorizedError })
   @ApiNotFoundResponse({ description: 'Album was not found' })
-  async deleteAlbum(@Param('id') id: IdT, @Res() response: Response) {
-    checkIdValid(id);
-
+  async deleteAlbum(
+    @Res() response: Response,
+    @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
+  ) {
     if (!(await this.favoritesService.checkFavoriteAlbumId(id))) {
       throwNotFavoriteException({ id, entityName: 'Album' });
     }
@@ -155,8 +162,10 @@ export class FavoritesController {
   @ApiUnprocessableEntityResponse({
     description: "Artist with id doesn't exist",
   })
-  async addArtist(@Param('id') id: IdT, @Res() response: Response) {
-    checkIdValid(id);
+  async addArtist(
+    @Res() response: Response,
+    @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
+  ) {
     checkArtistExistsById(id, HttpStatus.UNPROCESSABLE_ENTITY);
     const favorites = await this.favoritesService.addArtist(id);
     response.status(HttpStatus.CREATED).send(favorites);
@@ -174,9 +183,10 @@ export class FavoritesController {
   @ApiBadRequestResponse({ description: 'Bad. artistId is invalid (not uuid)' })
   @ApiUnauthorizedResponse({ description: RESPONSE_MESSAGES.UnauthorizedError })
   @ApiNotFoundResponse({ description: 'Artist was not found' })
-  async deleteArtist(@Param('id') id: IdT, @Res() response: Response) {
-    checkIdValid(id);
-
+  async deleteArtist(
+    @Res() response: Response,
+    @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
+  ) {
     if (!(await this.favoritesService.checkFavoriteArtistId(id))) {
       throwNotFavoriteException({ id, entityName: 'Artist' });
     }

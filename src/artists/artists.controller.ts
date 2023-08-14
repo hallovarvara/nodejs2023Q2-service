@@ -9,6 +9,7 @@ import {
   Put,
   Res,
   Body,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -23,11 +24,11 @@ import { Response } from 'express';
 import { IdT } from '@/lib/types';
 import { ArtistsService } from './artists.service';
 import { ArtistDto } from '@/artists/dto/artist.dto';
-import { checkIdValid } from '@/lib/utils/check-id-valid';
 import { checkArtistExistsById } from '@/lib/utils/check-artist-exists-by-id';
 import { checkArtistRequestValid } from '@/artists/utils/check-artist-request-valid';
 import { Artist } from '@/artists/artists.entity';
 import { RESPONSE_MESSAGES } from '@/lib/constants/response-messages';
+import { UUID_VERSION } from '@/lib/constants';
 
 @Controller('artist')
 @ApiTags('artist')
@@ -63,8 +64,10 @@ export class ArtistsController {
   })
   @ApiUnauthorizedResponse({ description: RESPONSE_MESSAGES.UnauthorizedError })
   @ApiNotFoundResponse({ description: 'Artist was not found' })
-  async getOne(@Res() response: Response, @Param('id') id: IdT) {
-    checkIdValid(id);
+  async getOne(
+    @Res() response: Response,
+    @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
+  ) {
     checkArtistExistsById(id);
     const artist = await this.artistsService.getOne(id);
     response.status(HttpStatus.OK).send(artist);
@@ -106,10 +109,9 @@ export class ArtistsController {
   async update(
     @Body() body: ArtistDto,
     @Res() response: Response,
-    @Param('id') id: IdT,
+    @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
   ) {
     checkArtistRequestValid(body);
-    checkIdValid(id);
     checkArtistExistsById(id);
     const artist = await this.artistsService.update(body, id);
     response.status(HttpStatus.OK).send(artist);
@@ -129,8 +131,10 @@ export class ArtistsController {
   })
   @ApiUnauthorizedResponse({ description: RESPONSE_MESSAGES.UnauthorizedError })
   @ApiNotFoundResponse({ description: 'Artist was not found' })
-  async delete(@Res() response: Response, @Param('id') id: IdT) {
-    checkIdValid(id);
+  async delete(
+    @Res() response: Response,
+    @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
+  ) {
     checkArtistExistsById(id);
     const artist = await this.artistsService.delete(id);
     response.status(HttpStatus.NO_CONTENT).send(artist);
