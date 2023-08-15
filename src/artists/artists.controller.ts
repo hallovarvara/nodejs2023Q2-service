@@ -24,7 +24,6 @@ import { Response } from 'express';
 import { IdT } from '@/lib/types';
 import { ArtistsService } from './artists.service';
 import { ArtistDto } from '@/artists/dto/artist.dto';
-import { checkArtistExistsById } from '@/lib/utils/check-artist-exists-by-id';
 import { checkArtistRequestValid } from '@/artists/utils/check-artist-request-valid';
 import { Artist } from '@/artists/artists.entity';
 import { RESPONSE_MESSAGES } from '@/lib/constants/response-messages';
@@ -68,7 +67,6 @@ export class ArtistsController {
     @Res() response: Response,
     @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
   ) {
-    checkArtistExistsById(id);
     const artist = await this.artistsService.getOne(id);
     response.status(HttpStatus.OK).send(artist);
   }
@@ -112,7 +110,6 @@ export class ArtistsController {
     @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
   ) {
     checkArtistRequestValid(body);
-    checkArtistExistsById(id);
     const artist = await this.artistsService.update(body, id);
     response.status(HttpStatus.OK).send(artist);
   }
@@ -135,8 +132,7 @@ export class ArtistsController {
     @Res() response: Response,
     @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
   ) {
-    checkArtistExistsById(id);
-    const artist = await this.artistsService.delete(id);
-    response.status(HttpStatus.NO_CONTENT).send(artist);
+    await this.artistsService.delete(id);
+    response.sendStatus(HttpStatus.NO_CONTENT);
   }
 }

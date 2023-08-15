@@ -26,7 +26,6 @@ import { TracksService } from './tracks.service';
 import { Track } from '@/tracks/tracks.entity';
 import { TrackDto } from '@/tracks/dto/track.dto';
 import { RESPONSE_MESSAGES } from '@/lib/constants/response-messages';
-import { checkTrackExistsById } from '@/lib/utils/check-track-exists-by-id';
 import { checkTrackRequestValid } from './utils/check-track-request-valid';
 import { UUID_VERSION } from '@/lib/constants';
 
@@ -68,7 +67,6 @@ export class TracksController {
     @Res() response: Response,
     @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
   ) {
-    checkTrackExistsById(id);
     const track = await this.tracksService.getOne(id);
     response.status(HttpStatus.OK).send(track);
   }
@@ -112,7 +110,6 @@ export class TracksController {
     @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
   ) {
     checkTrackRequestValid(body);
-    checkTrackExistsById(id);
     const track = await this.tracksService.update(body, id);
     response.status(HttpStatus.OK).send(track);
   }
@@ -135,8 +132,7 @@ export class TracksController {
     @Res() response: Response,
     @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
   ) {
-    checkTrackExistsById(id);
-    const track = await this.tracksService.delete(id);
-    response.status(HttpStatus.NO_CONTENT).send(track);
+    await this.tracksService.delete(id);
+    response.sendStatus(HttpStatus.NO_CONTENT);
   }
 }

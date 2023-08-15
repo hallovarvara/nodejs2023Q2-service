@@ -23,14 +23,10 @@ import {
 import { Response } from 'express';
 import { IdT } from '@/lib/types';
 import { FavoritesService } from './favorites.service';
-import { throwNotFavoriteException } from '@/favorites/utils/throw-not-favorite-exception';
-import { checkTrackExistsById } from '@/lib/utils/check-track-exists-by-id';
-import { checkAlbumExistsById } from '@/lib/utils/check-album-exists-by-id';
-import { checkArtistExistsById } from '@/lib/utils/check-artist-exists-by-id';
-import { RESPONSE_MESSAGES } from '@/lib/constants/response-messages';
 import { Favorites } from '@/favorites/favorites.entity';
 import { Track } from '@/tracks/tracks.entity';
 import { Album } from '@/albums/albums.entity';
+import { RESPONSE_MESSAGES } from '@/lib/constants/response-messages';
 import { UUID_VERSION } from '@/lib/constants';
 
 @Controller('favs')
@@ -70,7 +66,6 @@ export class FavoritesController {
     @Res() response: Response,
     @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
   ) {
-    checkTrackExistsById(id, HttpStatus.UNPROCESSABLE_ENTITY);
     const favorites = await this.favoritesService.addTrack(id);
     response.status(HttpStatus.CREATED).send(favorites);
   }
@@ -91,10 +86,6 @@ export class FavoritesController {
     @Res() response: Response,
     @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
   ) {
-    if (!(await this.favoritesService.checkFavoriteTrackId(id))) {
-      throwNotFavoriteException({ id, entityName: 'Track' });
-    }
-
     const favorites = await this.favoritesService.deleteTrack(id);
     response.status(HttpStatus.NO_CONTENT).send(favorites);
   }
@@ -117,7 +108,6 @@ export class FavoritesController {
     @Res() response: Response,
     @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
   ) {
-    checkAlbumExistsById(id, HttpStatus.UNPROCESSABLE_ENTITY);
     const favorites = await this.favoritesService.addAlbum(id);
     response.status(HttpStatus.CREATED).send(favorites);
   }
@@ -138,10 +128,6 @@ export class FavoritesController {
     @Res() response: Response,
     @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
   ) {
-    if (!(await this.favoritesService.checkFavoriteAlbumId(id))) {
-      throwNotFavoriteException({ id, entityName: 'Album' });
-    }
-
     const favorites = await this.favoritesService.deleteAlbum(id);
     response.status(HttpStatus.NO_CONTENT).send(favorites);
   }
@@ -166,7 +152,6 @@ export class FavoritesController {
     @Res() response: Response,
     @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
   ) {
-    checkArtistExistsById(id, HttpStatus.UNPROCESSABLE_ENTITY);
     const favorites = await this.favoritesService.addArtist(id);
     response.status(HttpStatus.CREATED).send(favorites);
   }
@@ -187,10 +172,6 @@ export class FavoritesController {
     @Res() response: Response,
     @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
   ) {
-    if (!(await this.favoritesService.checkFavoriteArtistId(id))) {
-      throwNotFavoriteException({ id, entityName: 'Artist' });
-    }
-
     const favorites = await this.favoritesService.deleteArtist(id);
     response.status(HttpStatus.NO_CONTENT).send(favorites);
   }

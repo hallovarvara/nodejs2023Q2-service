@@ -4,9 +4,9 @@ USER node
 WORKDIR /app
 COPY --chown=node:node package*.json ./
 RUN npm i
+COPY . .
 RUN npx prisma generate
 RUN npm cache clean --force
-COPY . .
 
 # production image
 FROM node:18-alpine AS build
@@ -25,3 +25,5 @@ FROM node:18-alpine AS production
 COPY --chown=node:node --from=build /app/node_modules ./node_modules
 COPY --chown=node:node --from=build /app/dist ./dist
 CMD ["node", "dist/src/main.js"]
+
+RUN npm run docker:create-bridge

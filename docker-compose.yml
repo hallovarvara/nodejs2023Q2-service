@@ -1,7 +1,7 @@
 version: '3'
 services:
   postgres:
-    container_name: 'nodejs-home-service-postgres'
+    container_name: ${POSTGRES_CONTAINER}
     #   image: hallovarvara/nodejs-home-service-db
     platform: linux/arm64
     build:
@@ -15,7 +15,7 @@ services:
     ports:
       - ${POSTGRES_PORT}:${POSTGRES_PORT_INNER}
     networks:
-      - bridgeapidb
+      - api-db-bridge
     volumes:
       - data:/var/lib/postgresql/data
       - logs:/var/lib/postgresql/logs
@@ -30,7 +30,7 @@ services:
       context: .
       target: development
     networks:
-      - bridgeapidb
+      - api-db-bridge
     volumes:
       - ./:/app
       - /app/node_modules
@@ -46,7 +46,7 @@ services:
       - postgres
 
 networks:
-  bridgeapidb:
+  api-db-bridge:
     driver: bridge
 
 volumes:

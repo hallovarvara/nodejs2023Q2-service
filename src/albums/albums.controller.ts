@@ -23,11 +23,10 @@ import {
 import { Response } from 'express';
 import { IdT } from '@/lib/types';
 import { AlbumsService } from './albums.service';
-import { checkAlbumExistsById } from '@/lib/utils/check-album-exists-by-id';
 import { checkAlbumRequestValid } from './utils/check-album-request-valid';
 import { Album } from '@/albums/albums.entity';
-import { RESPONSE_MESSAGES } from '@/lib/constants/response-messages';
 import { AlbumDto } from '@/albums/dto/album.dto';
+import { RESPONSE_MESSAGES } from '@/lib/constants/response-messages';
 import { UUID_VERSION } from '@/lib/constants';
 
 @Controller('album')
@@ -68,9 +67,8 @@ export class AlbumsController {
     @Res() response: Response,
     @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
   ) {
-    checkAlbumExistsById(id);
-    const artist = await this.albumsService.getOne(id);
-    response.status(HttpStatus.OK).send(artist);
+    const album = await this.albumsService.getOne(id);
+    response.status(HttpStatus.OK).send(album);
   }
 
   @Post()
@@ -112,9 +110,8 @@ export class AlbumsController {
     @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
   ) {
     checkAlbumRequestValid(body);
-    checkAlbumExistsById(id);
-    const artist = await this.albumsService.update(body, id);
-    response.status(HttpStatus.OK).send(artist);
+    const album = await this.albumsService.update(body, id);
+    response.status(HttpStatus.OK).send(album);
   }
 
   @Delete('/:id')
@@ -135,8 +132,7 @@ export class AlbumsController {
     @Res() response: Response,
     @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
   ) {
-    checkAlbumExistsById(id);
-    const artist = await this.albumsService.delete(id);
-    response.status(HttpStatus.NO_CONTENT).send(artist);
+    await this.albumsService.delete(id);
+    response.sendStatus(HttpStatus.NO_CONTENT);
   }
 }

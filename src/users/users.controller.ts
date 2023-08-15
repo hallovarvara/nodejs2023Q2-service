@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   HttpCode,
-  HttpException,
   HttpStatus,
   Param,
   ParseUUIDPipe,
@@ -27,13 +26,12 @@ import { User } from '@/users/user.entity';
 import { IdT } from '@/lib/types';
 import { UsersService } from './users.service';
 import { checkUserCreateRequestValid } from './utils/check-user-create-request-valid';
-import { checkUserExistsById } from './utils/check-user-exists-by-id';
-import { getUserResponse } from './utils/get-user-response';
 import { checkUserUpdateRequestValid } from './utils/check-user-update-request-valid';
 import { RESPONSE_MESSAGES } from '@/lib/constants/response-messages';
 import { UUID_VERSION } from '@/lib/constants';
 import { CreateUserDto } from '@/users/dto/create-user.dto';
 import { UpdateUserDto } from '@/users/dto/update-user.dto';
+import { removeUserSensitiveData } from '@/lib/utils/remove-user-sensitive-data';
 
 @Controller('user')
 @ApiTags('user')
@@ -53,7 +51,7 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   async findAll(): Promise<Omit<User, 'password'>[]> {
     const users = await this.usersService.getAll();
-    return users.map(getUserResponse);
+    return users.map(removeUserSensitiveData);
   }
 
   @Get('/:id')
@@ -74,9 +72,8 @@ export class UsersController {
     @Res() response: Response,
     @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
   ) {
-    checkUserExistsById(id);
     const user = await this.usersService.getOne(id);
-    response.status(HttpStatus.OK).send(getUserResponse(user));
+    response.status(HttpStatus.OK).send(removeUserSensitiveData(user));
   }
 
   @Post()
@@ -95,7 +92,7 @@ export class UsersController {
   async create(@Body() body: CreateUserDto, @Res() response: Response) {
     checkUserCreateRequestValid(body);
     const user = await this.usersService.create(body);
-    response.status(HttpStatus.CREATED).send(getUserResponse(user));
+    response.status(HttpStatus.CREATED).send(removeUserSensitiveData(user));
   }
 
   @Put('/:id')
@@ -116,19 +113,8 @@ export class UsersController {
     @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
   ) {
     checkUserUpdateRequestValid(body);
-    checkUserExistsById(id);
-
-    const user = await this.usersService.getOne(id);
-
-    if (user.password !== body.oldPassword) {
-      throw new HttpException(
-        `Current user password is wrong`,
-        HttpStatus.FORBIDDEN,
-      );
-    }
-
-    const updatedUser = await this.usersService.update(body, id);
-    response.status(HttpStatus.OK).send(getUserResponse(updatedUser));
+    const user = await this.usersService.update(body, id);
+    response.status(HttpStatus.OK).send(removeUserSensitiveData(user));
   }
 
   @Delete('/:id')
@@ -149,8 +135,7 @@ export class UsersController {
     @Res() response: Response,
     @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
   ) {
-    checkUserExistsById(id);
-    const user = await this.usersService.delete(id);
-    response.status(HttpStatus.NO_CONTENT).send(getUserResponse(user));
+    await this.usersService.delete(id);
+    response.sendStatus(HttpStatus.NO_CONTENT);
   }
 }

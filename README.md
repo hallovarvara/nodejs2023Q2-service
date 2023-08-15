@@ -29,36 +29,50 @@ Make sure Node version is 18+.
 
 Copy `.env.example` file, paste it, and rename to `.env`.
 
-## Running application
+## Run application
 
 It's recommended to install [Docker Desktop](https://www.docker.com/products/docker-desktop/) to be able to check run containers better.
 
-Run in terminal:
+Run in console:
 
 ```bash
 npm run docker:start
-```
-
-If you got this error (Mac users):  
-`open /Users/username/.docker/buildx/current: permission denied`
-
-then run:
-```bash
-sudo chown -R $(whoami) ~/.docker
-```
-
-Make data migration:
-```bash
-npm run docker:prisma:migrate
 ```
 
 After starting the app on port (4000 as default) you can open
 in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
+### Potential problems of running application and their solutions
+
+#### You use Mac OS, and you see this error message:
+`open /Users/username/.docker/buildx/current: permission denied`
+
+Run in console:
+```bash
+sudo chown -R $(whoami) ~/.docker
+```
+
+#### You see message like "Prisma client isn't initialized"
+
+Or similar message. API container at the same time falls and tries to run again. In Docker Desktop it's orange.
+
+Initialize Prisma client from your console:
+```bash
+npm run docker:prisma:generate
+```
+
+#### You try to start "npm run test" and almost all tests fall with message: "socket problem" or so
+
+Manually initialize a bridge to connect API and database (run in console):
+
+```bash
+npm run docker:create-bridge
+```
+
 ## Testing
 
-After application running open new terminal and enter:
+After application running open new console and enter:
 
 To run all tests without authorization
 
