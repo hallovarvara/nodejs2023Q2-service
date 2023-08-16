@@ -28,17 +28,6 @@ export class UsersService {
   }
 
   async create({ login, password }: CreateUserDto): Promise<User> {
-    const existingUser = await this.prisma.user.findUnique({
-      where: { login },
-    });
-
-    if (existingUser) {
-      throw new HttpException(
-        `User with login "${login}" already exists`,
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
     const date = new Date();
 
     const data = {
