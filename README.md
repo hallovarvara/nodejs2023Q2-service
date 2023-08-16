@@ -29,7 +29,7 @@ Make sure Node version is 18+.
 
 Copy `.env.example` file, paste it, and rename to `.env`.
 
-## Run application
+## Run application with Docker
 
 It's recommended to install [Docker Desktop](https://www.docker.com/products/docker-desktop/) to be able to check run containers better.
 
@@ -68,6 +68,12 @@ Manually initialize a bridge to connect API and database (run in console):
 
 ```bash
 npm run docker:create-bridge
+```
+
+## Scan vulnerabilities
+
+```bash
+npm run docker:scan
 ```
 
 ## Testing
