@@ -1,6 +1,5 @@
-import { HttpException } from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
 import { IdT } from '@/lib/types';
-import { HttpStatus } from '@nestjs/common';
 
 export const throwExceptionNotFound = ({
   entityName,
