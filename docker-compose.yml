@@ -23,7 +23,7 @@ services:
 
   api:
     container_name: 'nodejs-home-service-api'
-    image: hallovarvara/nodejs-home-service-api
+#   image: hallovarvara/nodejs-home-service-api
     platform: linux/arm64
     build:
       dockerfile: Dockerfile

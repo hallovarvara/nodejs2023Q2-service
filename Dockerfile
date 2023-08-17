@@ -22,10 +22,9 @@ RUN npm cache clean --force
 
 # copy production files & start server
 FROM node:18-alpine AS production
+USER node
+WORKDIR /app
 COPY --chown=node:node ./package*.json ./
 COPY --chown=node:node --from=build /app/node_modules ./node_modules
 COPY --chown=node:node --from=build /app/dist ./dist
-RUN ls
-CMD ["node", "dist/src/main.js"]
-
-#RUN npm run docker:create-bridge
+COPY --chown=node:node --from=build /app/prisma ./prisma

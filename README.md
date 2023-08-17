@@ -76,7 +76,7 @@ Run migration:
 npm run docker:prisma:migrate:dev
 ```
 
-#### You try to start "npm run test" and almost all tests fall with message: "socket problem" or so
+#### You try to start "npm run test" and almost all tests fall with message: "socket hang up" or so
 
 Manually initialize a bridge to connect API and database (run in console):
 
