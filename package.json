@@ -25,7 +25,7 @@
     "docker:prisma:generate": "docker exec nodejs-home-service-api npm run prisma:generate",
     "docker:prisma:migrate": "docker exec nodejs-home-service-api npm run prisma:migrate",
     "docker:prisma:migrate:dev": "docker exec nodejs-home-service-api npm run prisma:migrate:dev",
-    "docker:scan": "docker scan hallovarvara/nodejs-home-service-api && docker scan hallovarvara/nodejs-home-service-db",
+    "docker:scan": "docker scout cves hallovarvara/nodejs-home-service-api && docker scout cves hallovarvara/nodejs-home-service-db",
     "docker:delete": "docker rmi nodejs2023q2-service-api && docker rmi nodejs2023q2-service-postgres",
     "docker:create-bridge": "docker network create api-db-bridge",
     "docker:start": "docker-compose up --build",

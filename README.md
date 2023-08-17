@@ -76,6 +76,8 @@ npm run docker:create-bridge
 npm run docker:scan
 ```
 
+If you see in console that `docker scout` is unknown Docker command, update Docker version to the latest one.
+
 ## Testing
 
 After application running open new console and enter:
