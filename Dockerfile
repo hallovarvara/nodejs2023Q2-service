@@ -17,13 +17,15 @@ COPY --chown=node:node --from=development /app/node_modules ./node_modules
 COPY --chown=node:node . .
 RUN npm run build
 ENV NODE_ENV production
-RUN npm ci --omit=dev
+RUN npm i --omit=dev
 RUN npm cache clean --force
 
 # copy production files & start server
 FROM node:18-alpine AS production
+COPY --chown=node:node ./package*.json ./
 COPY --chown=node:node --from=build /app/node_modules ./node_modules
 COPY --chown=node:node --from=build /app/dist ./dist
+RUN ls
 CMD ["node", "dist/src/main.js"]
 
-RUN npm run docker:create-bridge
+#RUN npm run docker:create-bridge

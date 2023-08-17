@@ -28,7 +28,7 @@ services:
     build:
       dockerfile: Dockerfile
       context: .
-      target: production
+      target: development
     networks:
       - api-db-bridge
     volumes:
@@ -38,7 +38,7 @@ services:
       - .env
     environment:
       - DATABASE_URL=${DATABASE_URL}
-    command: npm run start:prod:in-docker
+    command: npm run start:dev
     ports:
       - ${PORT}:${PORT}
     restart: always

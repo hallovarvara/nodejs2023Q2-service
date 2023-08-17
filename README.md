@@ -29,14 +29,22 @@ Make sure Node version is 18+.
 
 Copy `.env.example` file, paste it, and rename to `.env`.
 
-## Run application with Docker
+## Run application with Docker with production
 
 It's recommended to install [Docker Desktop](https://www.docker.com/products/docker-desktop/) to be able to check run containers better.
+
+Run to create size-optimized API container (approximately 300 MB):
+
+```bash
+npm run docker:start
+```
+
+## Run application with Docker for development
 
 Run in console:
 
 ```bash
-npm run docker:start
+npm run docker:start:dev
 ```
 
 After starting the app on port (4000 as default) you can open
@@ -60,6 +68,12 @@ Or similar message. API container at the same time falls and tries to run again.
 Initialize Prisma client from your console:
 ```bash
 npm run docker:prisma:generate
+```
+
+Run migration:
+
+```bash
+npm run docker:prisma:migrate:dev
 ```
 
 #### You try to start "npm run test" and almost all tests fall with message: "socket problem" or so

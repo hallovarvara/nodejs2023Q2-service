@@ -13,6 +13,7 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
+    "start:prod:in-docker": "node app/dist/src/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest --testMatch \"<rootDir>/*.spec.ts\" --config ./test/jest-e2e.json --noStackTrace --runInBand",
     "test:auth": "cross-env TEST_MODE=auth jest --config ./test/jest-e2e.json --noStackTrace --runInBand",
@@ -28,8 +29,8 @@
     "docker:scan": "docker scout cves hallovarvara/nodejs-home-service-api && docker scout cves hallovarvara/nodejs-home-service-db",
     "docker:delete": "docker rmi nodejs2023q2-service-api && docker rmi nodejs2023q2-service-postgres",
     "docker:create-bridge": "docker network create api-db-bridge",
-    "docker:start": "docker-compose up --build",
-    "docker:start:dev": "npm run docker:delete && docker-compose up --force-recreate"
+    "docker:start:dev": "docker-compose -f docker-compose.dev.yml up --build",
+    "docker:start": "docker-compose up --build"
   },
   "dependencies": {
     "@nestjs/common": "^10.1.2",
