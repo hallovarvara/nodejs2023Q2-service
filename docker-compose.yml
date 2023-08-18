@@ -1,0 +1,55 @@
+version: '3'
+services:
+  postgres:
+    container_name: ${POSTGRES_CONTAINER}
+    image: hallovarvara/nodejs-home-service-db
+    platform: linux/arm64
+    build:
+      dockerfile: db/Dockerfile
+      context: .
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DATABASE=${POSTGRES_DATABASE}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT_INNER}
+    networks:
+      - api-db-bridge
+    volumes:
+      - data:/var/lib/postgresql/data
+      - logs:/var/lib/postgresql/logs
+    restart: always
+
+  api:
+    container_name: 'nodejs-home-service-api'
+#   image: hallovarvara/nodejs-home-service-api
+    platform: linux/arm64
+    build:
+      dockerfile: Dockerfile
+      context: .
+      target: production
+    networks:
+      - api-db-bridge
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+    command: npm run start:prod:in-docker
+    ports:
+      - ${PORT}:${PORT}
+    restart: always
+    depends_on:
+      - postgres
+
+networks:
+  api-db-bridge:
+    driver: bridge
+
+volumes:
+  data:
+  logs:
+  node-modules:

@@ -1,0 +1,15 @@
+.DS_Store
+.idea
+.git
+.env
+.dockerignore
+node_modules
+dist
+npm-debug.log
+Dockerfile
+docker-compose.yml
+prisma/migrations
+logs
+postgres
+test
+database

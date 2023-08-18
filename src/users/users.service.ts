@@ -1,53 +1,73 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { v4 } from 'uuid';
-import { db } from '@/lib/db';
-import { CreateUserDtoT, UpdatePasswordDtoT, UserT } from './users.type';
 import { IdT } from '@/lib/types';
+import { User } from '@/users/user.entity';
+import { CreateUserDto } from '@/users/dto/create-user.dto';
+import { UpdateUserDto } from '@/users/dto/update-user.dto';
+import { PrismaService } from '@/prisma/prisma.service';
+import { throwExceptionNotFound } from '@/lib/utils/throw-exception-not-found';
+import { normalizeUser } from '@/lib/utils/normalize-user';
 
 @Injectable()
 export class UsersService {
-  async getAll(): Promise<UserT[]> {
-    return db.users;
+  constructor(private readonly prisma: PrismaService) {}
+
+  async getAll(): Promise<User[]> {
+    const users = await this.prisma.user.findMany();
+    return users.map(normalizeUser);
   }
 
-  async getOne(id: IdT): Promise<UserT> {
-    return db.users.find((entry) => entry.id === id);
+  async getOne(id: IdT): Promise<User> {
+    const entry = await this.prisma.user.findUnique({ where: { id } });
+
+    if (!entry) {
+      throwExceptionNotFound({ entityName: 'User', id });
+    }
+
+    return normalizeUser(entry);
   }
 
-  async create({ login, password }: CreateUserDtoT): Promise<UserT> {
-    const timestampNow = new Date().getTime();
+  async create({ login, password }: CreateUserDto): Promise<User> {
+    const date = new Date();
 
-    const user = {
+    const data = {
       login,
       password,
       id: v4(),
-      createdAt: timestampNow,
-      updatedAt: timestampNow,
+      createdAt: date,
+      updatedAt: date,
       version: 1,
     };
 
-    db.users.push(user);
-    return user;
+    await this.prisma.user.create({ data });
+
+    return normalizeUser(data);
   }
 
-  async update({ newPassword }: UpdatePasswordDtoT, id: IdT) {
-    db.users = db.users.map((user) =>
-      user.id !== id
-        ? user
-        : {
-            ...user,
-            password: newPassword,
-            version: ++user.version,
-            updatedAt: new Date().getTime(),
-          },
-    );
+  async update({ newPassword, oldPassword }: UpdateUserDto, id: IdT) {
+    const entry = await this.getOne(id);
 
-    return db.users.find(({ id }) => id === id);
+    if (entry.password !== oldPassword) {
+      throw new HttpException(
+        `Current user password is wrong`,
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    const updatedUser = await this.prisma.user.update({
+      where: { id },
+      data: {
+        password: newPassword,
+        version: ++entry.version,
+        updatedAt: new Date(),
+      },
+    });
+
+    return normalizeUser(updatedUser);
   }
 
-  async delete(id: IdT): Promise<UserT> {
-    const index = db.users.findIndex((entry) => entry.id === id);
-    const [entry] = db.users.splice(index, 1);
-    return entry;
+  async delete(id: IdT) {
+    await this.getOne(id);
+    await this.prisma.user.delete({ where: { id } });
   }
 }

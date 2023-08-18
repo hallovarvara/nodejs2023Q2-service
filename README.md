@@ -23,25 +23,78 @@ git clone git@github.com:hallovarvara/nodejs2023Q2-service.git
 npm install
 ```
 
-Make sure Node version is 18+
+Make sure Node version is 18+.
 
 ## Add environment variables
 
-Copy `.env.example` file and paste it renamed to `.env`.
+Copy `.env.example` file, paste it, and rename to `.env`.
 
-## Running application
+## Run application with Docker with production
 
+It's recommended to install [Docker Desktop](https://www.docker.com/products/docker-desktop/) to be able to check run containers better.
+
+Run to create size-optimized API container (approximately 300 MB):
+
+```bash
+npm run docker:start
 ```
-npm start
+
+## Run application with Docker for development
+
+Run in console:
+
+```bash
+npm run docker:start:dev
 ```
 
 After starting the app on port (4000 as default) you can open
 in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
+### Potential problems of running application and their solutions
+
+#### You use Mac OS, and you see this error message:
+`open /Users/username/.docker/buildx/current: permission denied`
+
+Run in console:
+```bash
+sudo chown -R $(whoami) ~/.docker
+```
+
+#### You see message like "Prisma client isn't initialized"
+
+Or similar message. API container at the same time falls and tries to run again. In Docker Desktop it's orange.
+
+Initialize Prisma client from your console:
+```bash
+npm run docker:prisma:generate
+```
+
+Run migration:
+
+```bash
+npm run docker:prisma:migrate:dev
+```
+
+#### You try to start "npm run test" and almost all tests fall with message: "socket hang up" or so
+
+Manually initialize a bridge to connect API and database (run in console):
+
+```bash
+npm run docker:create-bridge
+```
+
+## Scan vulnerabilities
+
+```bash
+npm run docker:scan
+```
+
+If you see in console that `docker scout` is unknown Docker command, update Docker version to the latest one.
+
 ## Testing
 
-After application running open new terminal and enter:
+After application running open new console and enter:
 
 To run all tests without authorization
 
@@ -75,6 +128,14 @@ npm run lint
 
 ```
 npm run format
+```
+
+### Docker
+
+#### Scan Docker images for vulnerabilities
+
+```
+npm run docker:scan
 ```
 
 ### Debugging in VSCode

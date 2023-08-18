@@ -1,48 +1,46 @@
 import { Injectable } from '@nestjs/common';
 import { v4 } from 'uuid';
-import { db } from '@/lib/db';
-import { AlbumT, AlbumDtoT } from './albums.type';
 import { IdT } from '@/lib/types';
+import { AlbumDto } from '@/albums/dto/album.dto';
+import { Album } from '@/albums/albums.entity';
+import { PrismaService } from '@/prisma/prisma.service';
+import { throwExceptionNotFound } from '@/lib/utils/throw-exception-not-found';
 
 @Injectable()
 export class AlbumsService {
-  async getAll(): Promise<AlbumT[]> {
-    return db.albums;
+  constructor(private readonly prisma: PrismaService) {}
+
+  async getAll(): Promise<Album[]> {
+    return await this.prisma.album.findMany();
   }
 
-  async getOne(id: IdT): Promise<AlbumT> {
-    return db.albums.find((entry) => entry.id === id);
-  }
+  async getOne(id: IdT): Promise<Album> {
+    const entry = await this.prisma.album.findUnique({ where: { id } });
 
-  async create({ name, year, artistId }: AlbumDtoT): Promise<AlbumT> {
-    const album = {
-      id: v4(),
-      name,
-      year,
-      artistId,
-    };
+    if (!entry) {
+      throwExceptionNotFound({ entityName: 'Album', id });
+    }
 
-    db.albums.push(album);
-
-    return album;
-  }
-
-  async update({ name, year, artistId }: AlbumDtoT, id: IdT) {
-    db.albums = db.albums.map((entry) =>
-      entry.id !== id ? entry : { ...entry, name, year, artistId },
-    );
-
-    return db.albums.find((entry) => entry.id === id);
-  }
-
-  async delete(id: IdT): Promise<AlbumT> {
-    const index = db.albums.findIndex((entry) => entry.id === id);
-
-    db.tracks = db.tracks.map((entry) =>
-      entry.albumId === id ? { ...entry, albumId: null } : entry,
-    );
-
-    const [entry] = db.albums.splice(index, 1);
     return entry;
+  }
+
+  async create({ name, year, artistId }: AlbumDto): Promise<Album> {
+    const data = { id: v4(), name, year, artistId };
+    await this.prisma.album.create({ data });
+    return data;
+  }
+
+  async update({ name, year, artistId }: AlbumDto, id: IdT) {
+    await this.getOne(id);
+
+    return await this.prisma.album.update({
+      where: { id },
+      data: { name, year, artistId },
+    });
+  }
+
+  async delete(id: IdT) {
+    await this.getOne(id);
+    await this.prisma.album.delete({ where: { id } });
   }
 }

@@ -1,17 +1,27 @@
 import { Injectable } from '@nestjs/common';
 import { v4 } from 'uuid';
-import { db } from '@/lib/db';
-import { TrackT, TrackDtoT } from './tracks.type';
 import { IdT } from '@/lib/types';
+import { TrackDto } from '@/tracks/dto/track.dto';
+import { Track } from '@/tracks/tracks.entity';
+import { PrismaService } from '@/prisma/prisma.service';
+import { throwExceptionNotFound } from '@/lib/utils/throw-exception-not-found';
 
 @Injectable()
 export class TracksService {
-  async getAll(): Promise<TrackT[]> {
-    return db.tracks;
+  constructor(private readonly prisma: PrismaService) {}
+
+  async getAll(): Promise<Track[]> {
+    return await this.prisma.track.findMany();
   }
 
-  async getOne(id: IdT): Promise<TrackT> {
-    return db.tracks.find((entry) => entry.id === id);
+  async getOne(id: IdT): Promise<Track> {
+    const entry = await this.prisma.track.findUnique({ where: { id } });
+
+    if (!entry) {
+      throwExceptionNotFound({ entityName: 'Track', id });
+    }
+
+    return entry;
   }
 
   async create({
@@ -19,31 +29,23 @@ export class TracksService {
     duration,
     artistId,
     albumId,
-  }: TrackDtoT): Promise<TrackT> {
-    const track = {
-      id: v4(),
-      name,
-      duration,
-      artistId,
-      albumId,
-    };
-
-    db.tracks.push(track);
-
-    return track;
+  }: TrackDto): Promise<Track> {
+    const data = { id: v4(), name, duration, artistId, albumId };
+    await this.prisma.track.create({ data });
+    return data;
   }
 
-  async update({ name, duration, artistId, albumId }: TrackDtoT, id: IdT) {
-    db.tracks = db.tracks.map((entry) =>
-      entry.id !== id ? entry : { ...entry, name, duration, artistId, albumId },
-    );
+  async update({ name, duration, artistId, albumId }: TrackDto, id: IdT) {
+    await this.getOne(id);
 
-    return db.tracks.find((entry) => entry.id === id);
+    return await this.prisma.track.update({
+      where: { id },
+      data: { name, duration, artistId, albumId },
+    });
   }
 
-  async delete(id: IdT): Promise<TrackT> {
-    const index = db.tracks.findIndex((entry) => entry.id === id);
-    const [entry] = db.tracks.splice(index, 1);
-    return entry;
+  async delete(id: IdT) {
+    await this.getOne(id);
+    await this.prisma.track.delete({ where: { id } });
   }
 }

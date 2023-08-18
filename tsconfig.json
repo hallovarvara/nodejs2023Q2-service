@@ -1,9 +1,13 @@
 {
   "compilerOptions": {
     "module": "commonjs",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
+    "resolveJsonModule": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "target": "es2017",
@@ -20,5 +24,14 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
+  },
+  "watchOptions": {
+    "watchDirectory": "dynamicprioritypolling",
+    "watchFile": "dynamicprioritypolling",
+    "fallbackPolling": "dynamicpriority",
+    "excludeDirectories": [
+      "node_modules",
+      "dist",
+    ],
   }
 }
