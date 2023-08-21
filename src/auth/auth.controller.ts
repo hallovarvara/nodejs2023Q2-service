@@ -30,7 +30,7 @@ export class AuthController {
     type: User,
   })
   @ApiBadRequestResponse({ description: 'Bad request' })
-  @ApiConflictResponse({ description: 'Conflict. Login already exists' })
+  @ApiConflictResponse({ description: 'User with this login already exists' })
   async signup(@Body() body: CreateUserDto, @Res() response: Response) {
     const user = await this.authService.signup(body);
     response.status(HttpStatus.CREATED).send(user);

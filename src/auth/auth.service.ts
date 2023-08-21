@@ -24,7 +24,7 @@ export class AuthService {
 
     if (existingUser?.login === login) {
       throw new HttpException(
-        'Conflict. Login already exists',
+        `User with login "${login}" already exists`,
         HttpStatus.CONFLICT,
       );
     }
