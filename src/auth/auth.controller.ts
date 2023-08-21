@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  HttpStatus,
-  Post,
-  Res,
-  SetMetadata,
-} from '@nestjs/common';
+import { Body, Controller, HttpStatus, Post, Res } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiConflictResponse,
@@ -21,7 +14,7 @@ import { AuthService } from '@/auth/auth.service';
 import { CreateUserDto } from '@/users/dto/create-user.dto';
 import { JWT } from '@/auth/auth.entity';
 import { RefreshTokenDto } from '@/auth/dto/refresh-token.dto';
-import { IS_PUBLIC_KEY } from '@/lib/constants';
+import { Public } from '@/lib/decorators/public.decorator';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -29,7 +22,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('signup')
-  @SetMetadata(IS_PUBLIC_KEY, true)
+  @Public()
   @ApiOperation({ summary: 'Signup', description: 'Signup a user' })
   @ApiCreatedResponse({
     status: HttpStatus.CREATED,
@@ -44,7 +37,7 @@ export class AuthController {
   }
 
   @Post('login')
-  @SetMetadata(IS_PUBLIC_KEY, true)
+  @Public()
   @ApiOperation({
     summary: 'Login',
     description: 'Logins a user and returns a JWT-token',
@@ -60,7 +53,6 @@ export class AuthController {
   }
 
   @Post('refresh')
-  @SetMetadata(IS_PUBLIC_KEY, true)
   @ApiOperation({
     summary: 'Refresh tokens',
     description: 'Returns a fresh JWT-token',
