@@ -10,7 +10,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "start:dev": "nest start --watch",
+    "start:dev": "npx prisma migrate dev && nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "start:prod:in-docker": "npx prisma migrate dev && node dist/src/main",
@@ -29,7 +29,7 @@
     "docker:scan": "docker scout cves hallovarvara/nodejs-home-service-api && docker scout cves hallovarvara/nodejs-home-service-db",
     "docker:delete": "docker rmi nodejs2023q2-service-api && docker rmi nodejs2023q2-service-postgres",
     "docker:create-bridge": "docker network create api-db-bridge || true",
-    "docker:start:dev": "docker-compose -f docker-compose.dev.yml up --build --force-recreate",
+    "docker:start:dev": "npm run docker:create-bridge && docker-compose -f docker-compose.dev.yml up --build --force-recreate",
     "docker:start": "npm run docker:create-bridge && npm run build && docker-compose up --build --force-recreate"
   },
   "dependencies": {

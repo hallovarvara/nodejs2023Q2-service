@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { v4 } from 'uuid';
 import { IdT } from '@/lib/types';
 import { User } from '@/users/user.entity';
@@ -7,6 +7,12 @@ import { UpdateUserDto } from '@/users/dto/update-user.dto';
 import { PrismaService } from '@/prisma/prisma.service';
 import { throwExceptionNotFound } from '@/lib/utils/throw-exception-not-found';
 import { normalizeUser } from '@/lib/utils/normalize-user';
+import {
+  arePasswordsMatch,
+  encryptPassword,
+} from '@/users/utils/encrypt-password';
+import { checkUserCreateRequestValid } from '@/users/utils/check-user-create-request-valid';
+import { checkUserUpdateRequestValid } from '@/users/utils/check-user-update-request-valid';
 
 @Injectable()
 export class UsersService {
@@ -17,7 +23,7 @@ export class UsersService {
     return users.map(normalizeUser);
   }
 
-  async getOne(id: IdT): Promise<User> {
+  async getOneById(id: IdT): Promise<User> {
     const entry = await this.prisma.user.findUnique({ where: { id } });
 
     if (!entry) {
@@ -27,12 +33,19 @@ export class UsersService {
     return normalizeUser(entry);
   }
 
+  async getOneByLogin(login: string): Promise<User> {
+    const entry = await this.prisma.user.findFirst({ where: { login } });
+    return normalizeUser(entry);
+  }
+
   async create({ login, password }: CreateUserDto): Promise<User> {
+    checkUserCreateRequestValid({ login, password });
+
     const date = new Date();
 
     const data = {
       login,
-      password,
+      password: await encryptPassword(password),
       id: v4(),
       createdAt: date,
       updatedAt: date,
@@ -45,19 +58,23 @@ export class UsersService {
   }
 
   async update({ newPassword, oldPassword }: UpdateUserDto, id: IdT) {
-    const entry = await this.getOne(id);
+    checkUserUpdateRequestValid({ newPassword, oldPassword });
 
-    if (entry.password !== oldPassword) {
-      throw new HttpException(
-        `Current user password is wrong`,
-        HttpStatus.FORBIDDEN,
-      );
+    const entry = await this.getOneById(id);
+
+    if (
+      !(await arePasswordsMatch({
+        password: oldPassword,
+        storedPassword: entry.password,
+      }))
+    ) {
+      throw new ForbiddenException('Current user password is wrong');
     }
 
     const updatedUser = await this.prisma.user.update({
       where: { id },
       data: {
-        password: newPassword,
+        password: await encryptPassword(newPassword),
         version: ++entry.version,
         updatedAt: new Date(),
       },
@@ -67,7 +84,7 @@ export class UsersService {
   }
 
   async delete(id: IdT) {
-    await this.getOne(id);
+    await this.getOneById(id);
     await this.prisma.user.delete({ where: { id } });
   }
 }

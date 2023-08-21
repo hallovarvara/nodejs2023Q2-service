@@ -13,10 +13,12 @@ import {
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiResponse,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -30,6 +32,11 @@ import { RESPONSE_MESSAGES } from '@/lib/constants/response-messages';
 import { UUID_VERSION } from '@/lib/constants';
 
 @Controller('album')
+@ApiBearerAuth()
+@ApiResponse({
+  status: HttpStatus.UNAUTHORIZED,
+  description: 'Access token is missing or invalid',
+})
 @ApiTags('album')
 export class AlbumsController {
   constructor(private readonly albumsService: AlbumsService) {}

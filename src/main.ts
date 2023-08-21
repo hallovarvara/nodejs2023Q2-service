@@ -1,10 +1,9 @@
 import { NestFactory } from '@nestjs/core';
-import * as dotenv from 'dotenv';
 import { AppModule } from './app/app.module';
-import { PORT_DEFAULT } from '@/lib/constants';
+import { PORT } from '@/lib/constants';
+import { showError } from '@/lib/utils/show-error';
 import { addSwaggerModule } from '@/lib/utils/add-swagger-module';
-
-dotenv.config();
+import { LoggingService } from '@/logging/logging.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -12,13 +11,24 @@ async function bootstrap() {
     rawBody: true,
   });
 
+  const logger = app.get(LoggingService);
+
+  app.useLogger(logger);
+  // app.useGlobalFilters(new GlobalExceptionFilter());
+
   await addSwaggerModule(app);
 
-  const port = process.env.PORT || PORT_DEFAULT;
+  process.on('unhandledRejection', (error) =>
+    showError({ error, errorName: 'Unhandled Rejection', logger }),
+  );
 
-  await app.listen(port, () => {
-    console.log(`API: http://localhost:${port}`);
-    console.log(`Doc: http://localhost:${port}/doc`);
+  process.on('uncaughtException', (error) =>
+    showError({ error, errorName: 'Uncaught Exception', logger }),
+  );
+
+  await app.listen(PORT, () => {
+    console.log(`API: http://localhost:${PORT}`);
+    console.log(`Doc: http://localhost:${PORT}/doc`);
   });
 }
 

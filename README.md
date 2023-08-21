@@ -61,7 +61,7 @@ Run in console:
 sudo chown -R $(whoami) ~/.docker
 ```
 
-#### You see message like "Prisma client isn't initialized"
+#### You see message like "Prisma client isn't initialized" or "Database `name` does not exist on the database server at `host:port`"
 
 Or similar message. API container at the same time falls and tries to run again. In Docker Desktop it's orange.
 
@@ -95,18 +95,6 @@ If you see in console that `docker scout` is unknown Docker command, update Dock
 ## Testing
 
 After application running open new console and enter:
-
-To run all tests without authorization
-
-```
-npm run test
-```
-
-To run only one of all test suites
-
-```
-npm run test -- <path to suite>
-```
 
 To run all test with authorization
 

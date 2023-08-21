@@ -1,5 +1,8 @@
-export const normalizeUser = (user) => ({
-  ...user,
-  createdAt: user.createdAt.getTime(),
-  updatedAt: user.updatedAt.getTime(),
-});
+export const normalizeUser = (user) =>
+  user === null
+    ? user
+    : {
+        ...user,
+        createdAt: user.createdAt.getTime(),
+        updatedAt: user.updatedAt.getTime(),
+      };

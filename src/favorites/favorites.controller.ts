@@ -11,11 +11,13 @@ import {
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiResponse,
   ApiTags,
   ApiUnauthorizedResponse,
   ApiUnprocessableEntityResponse,
@@ -30,6 +32,11 @@ import { RESPONSE_MESSAGES } from '@/lib/constants/response-messages';
 import { UUID_VERSION } from '@/lib/constants';
 
 @Controller('favs')
+@ApiBearerAuth()
+@ApiResponse({
+  status: HttpStatus.UNAUTHORIZED,
+  description: 'Access token is missing or invalid',
+})
 @ApiTags('favs')
 export class FavoritesController {
   constructor(private readonly favoritesService: FavoritesService) {}

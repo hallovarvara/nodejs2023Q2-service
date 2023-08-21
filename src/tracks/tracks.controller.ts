@@ -13,10 +13,12 @@ import {
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiResponse,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -30,6 +32,11 @@ import { checkTrackRequestValid } from './utils/check-track-request-valid';
 import { UUID_VERSION } from '@/lib/constants';
 
 @Controller('track')
+@ApiBearerAuth()
+@ApiResponse({
+  status: HttpStatus.UNAUTHORIZED,
+  description: 'Access token is missing or invalid',
+})
 @ApiTags('track')
 export class TracksController {
   constructor(private readonly tracksService: TracksService) {}
