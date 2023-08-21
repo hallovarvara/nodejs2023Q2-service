@@ -33,6 +33,7 @@ services:
       - api-db-bridge
     volumes:
       - ./:/app
+      - ./logs:/app/logs
       - /app/node_modules
     env_file:
       - .env
