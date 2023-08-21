@@ -96,18 +96,6 @@ If you see in console that `docker scout` is unknown Docker command, update Dock
 
 After application running open new console and enter:
 
-To run all tests without authorization
-
-```
-npm run test
-```
-
-To run only one of all test suites
-
-```
-npm run test -- <path to suite>
-```
-
 To run all test with authorization
 
 ```
