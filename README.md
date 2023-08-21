@@ -61,7 +61,7 @@ Run in console:
 sudo chown -R $(whoami) ~/.docker
 ```
 
-#### You see message like "Prisma client isn't initialized"
+#### You see message like "Prisma client isn't initialized" or "Database `name` does not exist on the database server at `host:port`"
 
 Or similar message. API container at the same time falls and tries to run again. In Docker Desktop it's orange.
 

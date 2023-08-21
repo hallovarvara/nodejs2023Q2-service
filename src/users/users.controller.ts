@@ -22,15 +22,13 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Response } from 'express';
+import { UsersService } from './users.service';
 import { User } from '@/users/user.entity';
 import { IdT } from '@/lib/types';
-import { UsersService } from './users.service';
-import { checkUserCreateRequestValid } from './utils/check-user-create-request-valid';
-import { checkUserUpdateRequestValid } from './utils/check-user-update-request-valid';
-import { RESPONSE_MESSAGES } from '@/lib/constants/response-messages';
-import { UUID_VERSION } from '@/lib/constants';
 import { CreateUserDto } from '@/users/dto/create-user.dto';
 import { UpdateUserDto } from '@/users/dto/update-user.dto';
+import { RESPONSE_MESSAGES } from '@/lib/constants/response-messages';
+import { UUID_VERSION } from '@/lib/constants';
 import { removeUserSensitiveData } from '@/lib/utils/remove-user-sensitive-data';
 
 @Controller('user')
@@ -72,7 +70,7 @@ export class UsersController {
     @Res() response: Response,
     @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
   ) {
-    const user = await this.usersService.getOne(id);
+    const user = await this.usersService.getOneById(id);
     response.status(HttpStatus.OK).send(removeUserSensitiveData(user));
   }
 
@@ -90,7 +88,6 @@ export class UsersController {
   })
   @ApiUnauthorizedResponse({ description: RESPONSE_MESSAGES.UnauthorizedError })
   async create(@Body() body: CreateUserDto, @Res() response: Response) {
-    checkUserCreateRequestValid(body);
     const user = await this.usersService.create(body);
     response.status(HttpStatus.CREATED).send(removeUserSensitiveData(user));
   }
@@ -112,7 +109,6 @@ export class UsersController {
     @Res() response: Response,
     @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
   ) {
-    checkUserUpdateRequestValid(body);
     const user = await this.usersService.update(body, id);
     response.status(HttpStatus.OK).send(removeUserSensitiveData(user));
   }
