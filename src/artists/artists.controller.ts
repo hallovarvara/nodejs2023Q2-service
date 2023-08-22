@@ -26,7 +26,6 @@ import { Response } from 'express';
 import { IdT } from '@/lib/types';
 import { ArtistsService } from './artists.service';
 import { ArtistDto } from '@/artists/dto/artist.dto';
-import { checkArtistRequestValid } from '@/artists/utils/check-artist-request-valid';
 import { Artist } from '@/artists/artists.entity';
 import { RESPONSE_MESSAGES } from '@/lib/constants/response-messages';
 import { UUID_VERSION } from '@/lib/constants';
@@ -92,7 +91,6 @@ export class ArtistsController {
   })
   @ApiUnauthorizedResponse({ description: RESPONSE_MESSAGES.UnauthorizedError })
   async create(@Body() body: ArtistDto, @Res() response: Response) {
-    checkArtistRequestValid(body);
     const artist = await this.artistsService.create(body);
     response.status(HttpStatus.CREATED).send(artist);
   }
@@ -116,7 +114,6 @@ export class ArtistsController {
     @Res() response: Response,
     @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
   ) {
-    checkArtistRequestValid(body);
     const artist = await this.artistsService.update(body, id);
     response.status(HttpStatus.OK).send(artist);
   }

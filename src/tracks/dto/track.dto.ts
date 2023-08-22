@@ -1,6 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNumber, IsUUID, ValidateIf } from 'class-validator';
+import {
+  IsString,
+  IsNumber,
+  IsUUID,
+  ValidateIf,
+  IsNotEmpty,
+} from 'class-validator';
 import { UUID_VERSION } from '@/lib/constants';
+
+const validationOptions = {
+  message: 'Set correct "name" and "duration" fields',
+};
 
 export class TrackDto {
   @ApiProperty({
@@ -9,7 +19,8 @@ export class TrackDto {
     example: 'Slowly Deeply',
     required: true,
   })
-  @IsString()
+  @IsString(validationOptions)
+  @IsNotEmpty(validationOptions)
   readonly name: string;
 
   @ApiProperty({
@@ -18,7 +29,7 @@ export class TrackDto {
     example: 262,
     required: true,
   })
-  @IsNumber()
+  @IsNumber({ allowNaN: false }, validationOptions)
   readonly duration: number;
 
   @ApiProperty({

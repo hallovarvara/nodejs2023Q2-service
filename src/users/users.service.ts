@@ -11,8 +11,6 @@ import {
   arePasswordsMatch,
   encryptPassword,
 } from '@/users/utils/encrypt-password';
-import { checkUserCreateRequestValid } from '@/users/utils/check-user-create-request-valid';
-import { checkUserUpdateRequestValid } from '@/users/utils/check-user-update-request-valid';
 
 @Injectable()
 export class UsersService {
@@ -39,8 +37,6 @@ export class UsersService {
   }
 
   async create({ login, password }: CreateUserDto): Promise<User> {
-    checkUserCreateRequestValid({ login, password });
-
     const date = new Date();
 
     const data = {
@@ -58,8 +54,6 @@ export class UsersService {
   }
 
   async update({ newPassword, oldPassword }: UpdateUserDto, id: IdT) {
-    checkUserUpdateRequestValid({ newPassword, oldPassword });
-
     const entry = await this.getOneById(id);
 
     if (

@@ -4,6 +4,7 @@ import { PORT } from '@/lib/constants';
 import { showError } from '@/lib/utils/show-error';
 import { addSwaggerModule } from '@/lib/utils/add-swagger-module';
 import { LoggingService } from '@/logging/logging.service';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -14,6 +15,7 @@ async function bootstrap() {
   const logger = app.get(LoggingService);
 
   app.useLogger(logger);
+  app.useGlobalPipes(new ValidationPipe());
   // app.useGlobalFilters(new GlobalExceptionFilter());
 
   await addSwaggerModule(app);

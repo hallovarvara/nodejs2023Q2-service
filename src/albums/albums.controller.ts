@@ -25,7 +25,6 @@ import {
 import { Response } from 'express';
 import { IdT } from '@/lib/types';
 import { AlbumsService } from './albums.service';
-import { checkAlbumRequestValid } from './utils/check-album-request-valid';
 import { Album } from '@/albums/albums.entity';
 import { AlbumDto } from '@/albums/dto/album.dto';
 import { RESPONSE_MESSAGES } from '@/lib/constants/response-messages';
@@ -92,7 +91,6 @@ export class AlbumsController {
   })
   @ApiUnauthorizedResponse({ description: RESPONSE_MESSAGES.UnauthorizedError })
   async create(@Body() body: AlbumDto, @Res() response: Response) {
-    checkAlbumRequestValid(body);
     const artist = await this.albumsService.create(body);
     response.status(HttpStatus.CREATED).send(artist);
   }
@@ -116,7 +114,6 @@ export class AlbumsController {
     @Res() response: Response,
     @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
   ) {
-    checkAlbumRequestValid(body);
     const album = await this.albumsService.update(body, id);
     response.status(HttpStatus.OK).send(album);
   }

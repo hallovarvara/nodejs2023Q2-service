@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsBoolean } from 'class-validator';
+import { IsString, IsBoolean, IsNotEmpty } from 'class-validator';
+
+const validationOptions = { message: 'Set correct "name" and "grammy" fields' };
 
 export class ArtistDto {
   @ApiProperty({
@@ -8,7 +10,8 @@ export class ArtistDto {
     example: 'Pink',
     required: true,
   })
-  @IsString()
+  @IsString(validationOptions)
+  @IsNotEmpty(validationOptions)
   readonly name: string;
 
   @ApiProperty({
@@ -16,6 +19,7 @@ export class ArtistDto {
     description: 'Whether artist has got grammy or not',
     example: false,
   })
-  @IsBoolean()
+  @IsBoolean(validationOptions)
+  @IsNotEmpty(validationOptions)
   readonly grammy: boolean;
 }

@@ -28,7 +28,6 @@ import { TracksService } from './tracks.service';
 import { Track } from '@/tracks/tracks.entity';
 import { TrackDto } from '@/tracks/dto/track.dto';
 import { RESPONSE_MESSAGES } from '@/lib/constants/response-messages';
-import { checkTrackRequestValid } from './utils/check-track-request-valid';
 import { UUID_VERSION } from '@/lib/constants';
 
 @Controller('track')
@@ -92,7 +91,6 @@ export class TracksController {
   })
   @ApiUnauthorizedResponse({ description: RESPONSE_MESSAGES.UnauthorizedError })
   async create(@Body() body: TrackDto, @Res() response: Response) {
-    checkTrackRequestValid(body);
     const track = await this.tracksService.create(body);
     response.status(HttpStatus.CREATED).send(track);
   }
@@ -116,7 +114,6 @@ export class TracksController {
     @Res() response: Response,
     @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: IdT,
   ) {
-    checkTrackRequestValid(body);
     const track = await this.tracksService.update(body, id);
     response.status(HttpStatus.OK).send(track);
   }

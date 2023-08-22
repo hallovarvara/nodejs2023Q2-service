@@ -1,6 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNumber, IsUUID, ValidateIf } from 'class-validator';
+import {
+  IsString,
+  IsNumber,
+  IsUUID,
+  ValidateIf,
+  IsNotEmpty,
+} from 'class-validator';
 import { UUID_VERSION } from '@/lib/constants';
+
+const validationOptions = { message: 'Set correct "name" and "year" fields' };
 
 export class AlbumDto {
   @ApiProperty({
@@ -9,7 +17,8 @@ export class AlbumDto {
     example: 'Californication',
     required: true,
   })
-  @IsString()
+  @IsString(validationOptions)
+  @IsNotEmpty(validationOptions)
   readonly name: string;
 
   @ApiProperty({
@@ -18,7 +27,8 @@ export class AlbumDto {
     example: 1982,
     required: true,
   })
-  @IsNumber()
+  @IsNumber({ allowNaN: false }, validationOptions)
+  @IsNotEmpty(validationOptions)
   readonly year: number;
 
   @ApiProperty({
