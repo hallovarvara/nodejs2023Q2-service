@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiForbiddenResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
@@ -32,6 +33,7 @@ import { UUID_VERSION } from '@/lib/constants';
 import { removeUserSensitiveData } from '@/lib/utils/remove-user-sensitive-data';
 
 @Controller('user')
+@ApiBearerAuth()
 @ApiTags('user')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
